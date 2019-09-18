@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, InteractionManager } from "react-native";
+import { View,Text,FlatList, InteractionManager } from "react-native";
 import PropTypes from "prop-types";
 
 import { resolveImage, resolveLocal } from "./lib/model";
@@ -60,6 +60,7 @@ export default class MasonryList extends React.PureComponent {
 		onLongPressImage: PropTypes.func,
 
 		onEndReachedThreshold: PropTypes.number,
+
 	};
 
 	state = {
@@ -86,6 +87,22 @@ export default class MasonryList extends React.PureComponent {
 			}
 		});
 	}
+
+	render_FlatList_footer = () => {
+ 
+		var footer_View = (
+	 
+		<View>
+	 
+		  <Text> FlatList Footer </Text>
+	 
+		</View>
+	 
+		);
+	 
+		return footer_View;
+	 
+	  };
 
 	componentWillReceiveProps = (nextProps) => {
 		if (nextProps.layoutDimensions.width && nextProps.layoutDimensions.height &&
@@ -522,16 +539,18 @@ export default class MasonryList extends React.PureComponent {
 	}
 
 	render() {
+		//alert(this.props.scrollend)
 		return (
 			<FlatList
 				style={{
 					flex: 1,
 					padding: (this.props.layoutDimensions.width / 100) * this.props.spacing / 2,
-					backgroundColor: this.props.backgroundColor
+					backgroundColor: this.props.backgroundColor,
 				}}
+
 				contentContainerStyle={[{
 					flexDirection: "row",
-					width: "100%"
+					width: "100%",
 				}, this.props.listContainerStyle]}
 				removeClippedSubviews={true}
 				onEndReachedThreshold={this.props.onEndReachedThreshold}
@@ -542,9 +561,12 @@ export default class MasonryList extends React.PureComponent {
 						? this.props.initialColToRender
 						: this.props.columns
 				}
+				//ListFooterComponent= {this.render_FlatList_footer}
+				
 				keyExtractor={(item, index) => {
 					return "COLUMN-" + index.toString() + "/"; // + (this.props.columns - 1);
 				}}
+
 				data={this.state._sortedData}
 				renderItem={({ item, index }) => {
 					return (

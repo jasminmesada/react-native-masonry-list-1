@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View,AsyncStorage } from "react-native";
 import PropTypes from "prop-types";
 import ImageComponent from "./ImageComponent";
 import TouchableImageComponent from "./TouchableImageComponent";
@@ -36,6 +36,46 @@ export default class ImageCell extends React.PureComponent {
 		]),
 	}
 
+
+	    constructor() {
+		        super();
+		        this.state = {
+		            username: '',
+		            token: '',
+		            authorization: ''
+		        };
+		    }
+		
+		    getValueFunction = () => {
+		        AsyncStorage.getItem('username').then(value =>{
+		            //this.setState({username:'jasmin'})
+		            this.state.username=value
+		            //alert(this.state.username)
+		            if (this.state.username != null){
+		                AsyncStorage.getItem('token').then(value =>{
+		                this.state.token=value
+		                if(this.state.token != ""){
+		                {this.renderdata()}
+		               }
+		            });
+		        }else{
+		        }
+		        });
+		      };
+		
+		    componentDidMount(){
+		        {this.getValueFunction()}
+		    }
+		
+		    renderdata() {
+		        if(this.state.username != ""){
+		            //this.setState({loading:0})
+		            const base64 = require('base-64');    
+		            var auth = base64.encode(this.state.username+':'+this.state.token)
+		            this.state.authorization=auth
+		        }
+		      }		
+
 	_renderImage = () => {
 		const {
 			data, source, imageContainerStyle, onPressImage,
@@ -43,14 +83,18 @@ export default class ImageCell extends React.PureComponent {
 			customImageProps, masonryDimensions
 		} = this.props;
 		const { width, height, gutter } = masonryDimensions;
-
+		jas = JSON.stringify(source)
+		image1=(jas.substring(1, jas.length-1)+ ","+'"headers":'+'{"Authorization":' + '"Basic '+this.state.authorization+'"}')
+		image2=("{"+image1+"}")
+		imgsrc=JSON.parse(image2)
+		//alert(imgsrc)
 		return onPressImage || onLongPressImage
 			? <TouchableImageComponent
 				data={data}
 				width={width}
 				height={height}
 				gutter={gutter}
-				source={source}
+				source={imgsrc}
 				imageContainerStyle={imageContainerStyle}
 				customImageComponent={customImageComponent}
 				customImageProps={customImageProps}
@@ -62,7 +106,7 @@ export default class ImageCell extends React.PureComponent {
 				width={width}
 				height={height}
 				gutter={gutter}
-				source={source}
+				source={imgsrc}
 				imageContainerStyle={imageContainerStyle}
 				customImageComponent={customImageComponent}
 				customImageProps={customImageProps}
@@ -128,7 +172,7 @@ export default class ImageCell extends React.PureComponent {
 		}
 
 		return (
-			<View>
+			<View style={{borderWidth: .4}}>
 				{renderHeader}
 				{completeCustomComponent
 					? this._renderCustomImage()
